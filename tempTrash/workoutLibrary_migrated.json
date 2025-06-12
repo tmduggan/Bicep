@@ -1,0 +1,592 @@
+[
+  {
+    "id": "Barbell_Dumbbell_Squat",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Quads",
+      "Glutes"
+    ],
+    "secondaryMuscles": [],
+    "name": "Smith Machine Squat",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Bent_Over_Dumbbell_Row",
+    "name": "Bent Over Dumbbell Row",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Lats",
+      "Rhomboids"
+    ],
+    "secondaryMuscles": [
+      "Biceps",
+      "Rear Delts"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Cable_Triceps_Pushdown",
+    "name": "Cable Triceps Pushdown",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Triceps"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Cat_Cow",
+    "name": "Cat/Cow",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Spine Mobility"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Chest_Press",
+    "name": "Chest Press",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Chest",
+      "Triceps"
+    ],
+    "secondaryMuscles": [
+      "Shoulders"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Dead_Bug",
+    "name": "Dead Bug",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Hip Flexors"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Dumbbell_Bench_Press",
+    "name": "Dumbbell Bench Press",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Chest",
+      "Triceps"
+    ],
+    "secondaryMuscles": [
+      "Shoulders"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Dumbbell_Curl",
+    "name": "Dumbbell Curl",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Biceps"
+    ],
+    "secondaryMuscles": [
+      "Forearms"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Face_Pull",
+    "name": "Face Pull",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Rear Delts",
+      "Rhomboids"
+    ],
+    "secondaryMuscles": [
+      "Middle Traps"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Farmer_s_Walk",
+    "name": "Farmer's Walk",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Traps"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "duration"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Glute_Bridge",
+    "name": "Glute Bridge",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "secondaryMuscles": [
+      "Core"
+    ],
+    "fields": [
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "IRhSZbdusKdL1FmVuLS9",
+    "name": "Leg Press",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Quads",
+      "Glutes"
+    ],
+    "secondaryMuscles": [
+      "Hamstrings",
+      "Calves"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Bottoms_Up_Press",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Shoulders",
+      "Core"
+    ],
+    "secondaryMuscles": [
+      "Triceps"
+    ],
+    "name": "㎅ Bottoms-Up Press",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Carries",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Core",
+      "Traps"
+    ],
+    "secondaryMuscles": [
+      "Forearms",
+      "Legs"
+    ],
+    "name": "㎅ Carries",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Clean___Press",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Full Body"
+    ],
+    "secondaryMuscles": [
+      "Shoulders",
+      "Core",
+      "Legs"
+    ],
+    "name": "㎅ Clean & Press",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Goblet_Squat",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Quads",
+      "Glutes"
+    ],
+    "secondaryMuscles": [
+      "Hamstrings",
+      "Core"
+    ],
+    "name": "㎅ Goblet Squat",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_High_Pull",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "secondaryMuscles": [
+      "Shoulders",
+      "Core"
+    ],
+    "name": "㎅ High Pull",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Swing",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "secondaryMuscles": [
+      "Core",
+      "Shoulders"
+    ],
+    "name": "㎅ Swing",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Turkish_Get_Up",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Core",
+      "Shoulders"
+    ],
+    "secondaryMuscles": [
+      "Full Body Stabilizers"
+    ],
+    "name": "㎅ Turkish Get-Up",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Kettlebell_Windmill",
+    "category": "Full Body/Functional",
+    "primaryMuscles": [
+      "Core",
+      "Shoulders"
+    ],
+    "secondaryMuscles": [
+      "Glutes",
+      "Hamstrings"
+    ],
+    "name": "㎅ Windmill",
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Lateral_Pulldown",
+    "name": "Lateral Pulldown",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Lats",
+      "Biceps"
+    ],
+    "secondaryMuscles": [
+      "Rhomboids",
+      "Middle Traps"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Lateral_Row",
+    "name": "Lateral Row",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Lats",
+      "Rhomboids"
+    ],
+    "secondaryMuscles": [
+      "Biceps",
+      "Middle Traps"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Overhead_Press__Standing_",
+    "name": "Overhead Press (Standing)",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Shoulders",
+      "Core"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Plank_Variations",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Shoulders"
+    ],
+    "secondaryMuscles": [],
+    "name": "Plank",
+    "fields": [
+      "duration"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Prone_Y_Raises",
+    "name": "Prone Y-Raises",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Shoulders"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Pull_Up",
+    "name": "Pull Up",
+    "category": "Upper Body Pull",
+    "primaryMuscles": [
+      "Lats",
+      "Biceps"
+    ],
+    "secondaryMuscles": [
+      "Rhomboids",
+      "Middle Traps"
+    ],
+    "fields": [
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Romanian_Deadlift",
+    "name": "Romanian Deadlift",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Hamstrings",
+      "Glutes"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Run",
+    "name": "Run",
+    "category": "Cardio",
+    "primaryMuscles": [
+      "Cardiovascular"
+    ],
+    "secondaryMuscles": [
+      "Legs",
+      "Core"
+    ],
+    "fields": [
+      "distance",
+      "duration"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Seated_Leg_Curl",
+    "name": "Seated Leg Curl",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Hamstrings"
+    ],
+    "secondaryMuscles": [
+      "Glutes"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Shoulder_Press_Machine",
+    "name": "Shoulder Press Machine",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Shoulders",
+      "Triceps"
+    ],
+    "secondaryMuscles": [
+      "Chest"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Side_Plank",
+    "name": "Side Plank",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Core",
+      "Obliques"
+    ],
+    "secondaryMuscles": [
+      "Shoulders"
+    ],
+    "fields": [
+      "duration"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Single_Leg_Romanian_Deadlift",
+    "name": "Single-Leg Romanian Deadlift",
+    "category": "Lower Body",
+    "primaryMuscles": [
+      "Hamstrings",
+      "Glutes"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Triceps_Dip",
+    "name": "Triceps Dip",
+    "category": "Upper Body Push",
+    "primaryMuscles": [
+      "Triceps",
+      "Chest"
+    ],
+    "secondaryMuscles": [
+      "Shoulders"
+    ],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  },
+  {
+    "id": "Weighted_Crunch",
+    "name": "Weighted Crunch",
+    "category": "Core/Stability",
+    "primaryMuscles": [
+      "Abs"
+    ],
+    "secondaryMuscles": [],
+    "fields": [
+      "weight",
+      "reps"
+    ],
+    "best": {},
+    "lastLoggedDate": null
+  }
+]
