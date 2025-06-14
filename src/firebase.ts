@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,3 +20,24 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
+
+// User profile Firestore helpers
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+
+export async function getUserProfile(uid: string) {
+  const ref = doc(db, 'userProfiles', uid);
+  const snap = await getDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+
+export async function upsertUserProfile(uid: string, data: any) {
+  const ref = doc(db, 'userProfiles', uid);
+  await setDoc(ref, data, { merge: true });
+}
+
+export async function updateUserProfileStats(uid: string, updates: any) {
+  const ref = doc(db, 'userProfiles', uid);
+  await updateDoc(ref, updates);
+}
