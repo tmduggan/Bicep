@@ -447,7 +447,14 @@ const App: React.FC = () => {
       <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 relative">
         {/* Restore user profile/login UI at top right */}
         <div className="absolute top-4 right-4 z-10">
-          {!user ? null : (
+          {!user ? (
+            <button
+              onClick={handleLogin}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Sign in with Google
+            </button>
+          ) : (
             <div className="relative">
               <button
                 onClick={() => setProfileMenuOpen((open) => !open)}
