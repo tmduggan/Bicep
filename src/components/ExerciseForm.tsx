@@ -23,9 +23,10 @@ interface ExerciseStats {
 const ExerciseStats: React.FC<{ stats: ExerciseStats; selectedCategory: string; selectedExerciseName: string }> = ({ stats, selectedCategory, selectedExerciseName }) => {
   return (
     <div className="bg-white rounded-xl shadow p-3 mb-3 w-full flex flex-col gap-1 border border-gray-200 text-left text-[13px]">
-      <div className="font-semibold text-gray-700">
-        {selectedCategory} last worked:
-        <span className="ml-2 font-normal text-gray-900">
+      <div className="grid grid-cols-2 gap-x-2">
+        <span className="font-semibold text-gray-700">{selectedCategory}:</span>
+        <span className="font-normal text-gray-900">
+          last worked{' '}
           {stats.categoryLastWorked && stats.categoryLastWorked.daysAgo !== undefined
             ? stats.categoryLastWorked.daysAgo === 0
               ? 'Today'
@@ -34,10 +35,9 @@ const ExerciseStats: React.FC<{ stats: ExerciseStats; selectedCategory: string; 
                 : `${stats.categoryLastWorked.daysAgo} days ago`
             : 'Never'}
         </span>
-      </div>
-      <div className="font-semibold text-gray-700">
-        {selectedExerciseName || 'Exercise'} last worked:
-        <span className="ml-2 font-normal text-gray-900">
+        <span className="font-semibold text-gray-700">{selectedExerciseName || 'Exercise'}:</span>
+        <span className="font-normal text-gray-900">
+          last worked{' '}
           {stats.exerciseLastWorked && stats.exerciseLastWorked.daysAgo !== undefined
             ? stats.exerciseLastWorked.daysAgo === 0
               ? 'Today'
@@ -46,10 +46,8 @@ const ExerciseStats: React.FC<{ stats: ExerciseStats; selectedCategory: string; 
                 : `${stats.exerciseLastWorked.daysAgo} days ago`
             : 'Never'}
         </span>
-      </div>
-      <div className="font-semibold text-gray-700">
-        1RM:
-        <span className="ml-2 font-bold text-blue-700">
+        <span className="font-semibold text-gray-700">1RM:</span>
+        <span className="font-bold text-blue-700">
           {stats.exercise1RM
             ? `${stats.exercise1RM.weight} lbs (${stats.exercise1RM.weight} lbs x ${stats.exercise1RM.reps} reps) ` +
               (Math.floor((new Date().getTime() - stats.exercise1RM.date.getTime()) / (1000 * 60 * 60 * 24)) === 0
@@ -126,6 +124,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     exerciseLastWorked: null,
     exercise1RM: null
   });
+  const [profile, setProfile] = useState<any>(null);
 
   // Find the selected exercise object
   const selectedExercise = exercises.find(ex => ex.name === exercise);
@@ -151,6 +150,16 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     setSets([]);
     setDurationInput('');
   }, [editingEntry]);
+
+  // Fetch profile for days-since indicator
+  useEffect(() => {
+    async function fetchProfile() {
+      if (!user) return;
+      const p = await getUserProfile(user.uid);
+      setProfile(p);
+    }
+    fetchProfile();
+  }, [user]);
 
   // When an exercise button is clicked
   const handleExerciseButton = (ex: string) => {
@@ -228,6 +237,15 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     return (parseInt(min, 10) || 0) * 60 + (parseInt(sec, 10) || 0);
   }
 
+  // In ExerciseForm, wrap onAdd to also refresh the profile after adding a log
+  const handleAddAndRefreshProfile = async (entry: Omit<ExerciseEntry, 'id' | 'date'>) => {
+    await onAdd(entry);
+    if (user) {
+      const p = await getUserProfile(user.uid);
+      setProfile(p);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -284,7 +302,7 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     if (editingEntry) {
       onUpdate(entry);
     } else {
-      onAdd(entry);
+      await handleAddAndRefreshProfile(entry);
     }
     // Reset form after submit
     setExercise('');
@@ -354,27 +372,44 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
     setSets([{ weight: 0, reps: 0, distance: 0, duration: 0 }]);
   };
 
+  // Helper to get days since last logged for an exercise
+  function getDaysSinceLastLogged(profile: any, exercise: string) {
+    if (!profile || !profile.lastWorkedByExercise || !profile.lastWorkedByExercise[exercise]) return null;
+    const last = new Date(profile.lastWorkedByExercise[exercise]);
+    return Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">
         {/* Exercise selection buttons - CSS grid with fixed-size buttons */}
         <div className="grid grid-cols-4 gap-2 mb-2 justify-center">
-          {exercises.map(ex => (
-            <button
-              type="button"
-              key={ex.name}
-              className={`flex flex-col items-center justify-center min-w-[90px] max-w-[90px] h-[40px] px-1 py-1 rounded shadow text-[11px] font-medium border border-gray-300 transition leading-tight break-words overflow-hidden ${exercise === ex.name && !addingNew ? 'ring-2 ring-blue-400' : ''} ${CATEGORY_COLORS[ex.category] || 'bg-gray-100'} hover:bg-blue-100`}
-              onClick={() => handleExerciseSelect(ex)}
-              disabled={!!editingEntry}
-            >
-              {ex.iconUrl && (
-                <div className="w-5 h-5 flex items-center justify-center mb-0.5">
-                  <img src={ex.iconUrl} alt={ex.name} className="w-5 h-5 object-cover rounded" />
-                </div>
-              )}
-              <span className="text-center w-full">{ex.name}</span>
-            </button>
-          ))}
+          {exercises.map(ex => {
+            const days = getDaysSinceLastLogged(profile, ex.name);
+            let color = '';
+            if (days === null) color = 'bg-gray-300';
+            else if (days <= 3) color = 'bg-green-400';
+            else if (days <= 5) color = 'bg-yellow-400';
+            else color = 'bg-red-400';
+            return (
+              <button
+                type="button"
+                key={ex.name}
+                className={`relative flex flex-col items-center justify-center min-w-[90px] max-w-[90px] h-[40px] px-1 py-1 rounded shadow text-[11px] font-medium border border-gray-300 transition leading-tight break-words overflow-hidden ${exercise === ex.name && !addingNew ? 'ring-2 ring-blue-400' : ''} ${CATEGORY_COLORS[ex.category] || 'bg-gray-100'} hover:bg-blue-100`}
+                onClick={() => handleExerciseSelect(ex)}
+                disabled={!!editingEntry}
+              >
+                {ex.iconUrl && (
+                  <div className="w-5 h-5 flex items-center justify-center mb-0.5">
+                    <img src={ex.iconUrl} alt={ex.name} className="w-5 h-5 object-cover rounded" />
+                  </div>
+                )}
+                <span className="text-center w-full">{ex.name}</span>
+                {/* Days-since indicator */}
+                <span className={`absolute top-0 right-0 mt-0.5 mr-1 w-2.5 h-2.5 rounded-full ${color}`}></span>
+              </button>
+            );
+          })}
           <button
             type="button"
             className={`flex flex-col items-center justify-center px-1 py-1 rounded shadow text-xs font-bold border border-gray-300 bg-gray-100 hover:bg-green-100 transition min-w-[90px] max-w-[90px] h-[40px]`}
@@ -475,117 +510,19 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
               {/* Show input fields only if exercise is selected or adding new */}
               {!addingNew && !!selectedExercise && (
                 <>
-                  {/* Multiple set rows */}
-                  <div className="flex flex-col gap-2 mb-2">
-                    {sets.length === 0 && (
-                      <div className="flex gap-2 items-end">
-                        {fieldsToShow.includes('distance') && (
+                  {/* If the only field is duration, show only the time input and add set button */}
+                  {selectedExercise.fields.length === 1 && selectedExercise.fields[0] === 'duration' ? (
+                    <div className="flex flex-col gap-2 mb-2">
+                      {sets.map((set, idx) => (
+                        <div key={idx} className="flex gap-2 items-end">
                           <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Distance (miles)"
-                            value={distance}
-                            onChange={e => setDistance(e.target.value)}
-                          />
-                        )}
-                        {fieldsToShow.includes('duration') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Duration (sec)"
-                            value={duration}
-                            onChange={e => setDuration(e.target.value)}
-                          />
-                        )}
-                        {fieldsToShow.includes('weight') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Weight"
-                            value={weight}
-                            onChange={e => setWeight(e.target.value)}
-                          />
-                        )}
-                        {fieldsToShow.includes('reps') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Reps"
-                            value={reps}
-                            onChange={e => setReps(e.target.value)}
-                          />
-                        )}
-                        {/* When sets.length === 0, show the add set button for all except Run */}
-                        {!(fieldsToShow.includes('distance') && fieldsToShow.includes('duration')) && (
-                          <button
-                            type="button"
-                            className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
-                            onClick={handleAddSet}
-                            title="Add Set"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    )}
-                    {sets.map((set, idx) => (
-                      <div key={idx} className="flex gap-2 items-end">
-                        {fieldsToShow.includes('distance') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="Distance (miles)"
-                            value={set.distance}
-                            onChange={e => handleSetChange(idx, 'distance', e.target.value)}
-                          />
-                        )}
-                        {fieldsToShow.includes('duration') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Duration (sec)"
-                            value={set.duration}
+                            className="border rounded px-2 py-1 w-20 text-center"
+                            type="text"
+                            placeholder="0:00"
+                            value={set.duration || ''}
                             onChange={e => handleSetChange(idx, 'duration', e.target.value)}
+                            maxLength={5}
                           />
-                        )}
-                        {fieldsToShow.includes('weight') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Weight"
-                            value={set.weight}
-                            onChange={e => handleSetChange(idx, 'weight', e.target.value)}
-                          />
-                        )}
-                        {fieldsToShow.includes('reps') && (
-                          <input
-                            className="border rounded px-2 py-1 w-20"
-                            type="number"
-                            min="0"
-                            step="1"
-                            placeholder="Reps"
-                            value={set.reps}
-                            onChange={e => handleSetChange(idx, 'reps', e.target.value)}
-                          />
-                        )}
-                        {/* When sets.length === 0, show the add set button for all except Run */}
-                        {!(fieldsToShow.includes('distance') && fieldsToShow.includes('duration')) && (
                           <button
                             type="button"
                             className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
@@ -596,79 +533,229 @@ const ExerciseForm: React.FC<ExerciseFormProps> = ({
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                           </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  {fieldsToShow.includes('duration') && selectedExercise?.fields.includes('duration') && (
-                    <div className="flex items-end gap-2 mb-2">
-                      <input
-                        className="border rounded px-2 py-1 w-20 text-center"
-                        type="text"
-                        placeholder="0:00"
-                        value={formatTimeInput(durationInput)}
-                        onChange={e => setDurationInput(e.target.value)}
-                        maxLength={5}
-                      />
-                      <button
-                        type="button"
-                        className="w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
-                        onClick={handleAddSet}
-                        title="Add Set"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                      </button>
-                    </div>
-                  )}
-                  {/* 1RM display for Weight & Reps exercises */}
-                  {!addingNew && selectedExercise?.fields.includes('weight') && (() => {
-                    // Find all entries for this exercise in the last 2 months
-                    const now = new Date();
-                    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
-                    const relevantEntries = entries.filter(e =>
-                      e.exercise === selectedExercise.name &&
-                      e.sets && Array.isArray(e.sets) &&
-                      new Date(e.date) >= twoMonthsAgo
-                    );
-                    // Find best 1RM
-                    let best1RM = 0;
-                    let bestSet: SetEntry | null = null;
-                    let bestDate = null;
-                    relevantEntries.forEach(e => {
-                      e.sets.forEach(set => {
-                        if (set.weight && set.reps) {
-                          const oneRM = set.weight * (1 + set.reps / 30);
-                          if (oneRM > best1RM) {
-                            best1RM = oneRM;
-                            bestSet = set;
-                            bestDate = e.date;
-                          }
-                        }
-                      });
-                    });
-                    if (best1RM > 0 && bestSet && bestDate) {
-                      // Relative date
-                      const d = new Date(bestDate);
-                      const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-                      let rel = '';
-                      if (diffDays === 0) rel = 'Today';
-                      else if (diffDays === 1) rel = '1 day ago';
-                      else if (diffDays < 7) rel = `${diffDays} days ago`;
-                      else if (diffDays < 14) rel = '1 week ago';
-                      else if (diffDays < 30) rel = `${Math.floor(diffDays / 7)} weeks ago`;
-                      else if (diffDays < 60) rel = '1 month ago';
-                      else rel = `${Math.floor(diffDays / 30)} months ago`;
-                      return (
-                        <div className="mb-2 text-[13px] text-gray-700 text-center">
-                          <div><b>1RM:</b> {Math.round(best1RM)} lbs</div>
-                          <div className="text-gray-500 text-xs">({(bestSet as SetEntry).weight} x {(bestSet as SetEntry).reps}) {rel}</div>
                         </div>
-                      );
-                    }
-                    return null;
-                  })()}
+                      ))}
+                      {sets.length === 0 && (
+                        <div className="flex gap-2 items-end">
+                          <input
+                            className="border rounded px-2 py-1 w-20 text-center"
+                            type="text"
+                            placeholder="0:00"
+                            value={durationInput}
+                            onChange={e => setDurationInput(e.target.value)}
+                            maxLength={5}
+                          />
+                          <button
+                            type="button"
+                            className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
+                            onClick={handleAddSet}
+                            title="Add Set"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      {/* Multiple set rows */}
+                      <div className="flex flex-col gap-2 mb-2">
+                        {sets.length === 0 && (
+                          <div className="flex gap-2 items-end">
+                            {fieldsToShow.includes('distance') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="Distance (miles)"
+                                value={distance}
+                                onChange={e => setDistance(e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('duration') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Duration (sec)"
+                                value={duration}
+                                onChange={e => setDuration(e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('weight') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Weight"
+                                value={weight}
+                                onChange={e => setWeight(e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('reps') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Reps"
+                                value={reps}
+                                onChange={e => setReps(e.target.value)}
+                              />
+                            )}
+                            {/* When sets.length === 0, show the add set button for all except Run */}
+                            {!(fieldsToShow.includes('distance') && fieldsToShow.includes('duration')) && (
+                              <button
+                                type="button"
+                                className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
+                                onClick={handleAddSet}
+                                title="Add Set"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {sets.map((set, idx) => (
+                          <div key={idx} className="flex gap-2 items-end">
+                            {fieldsToShow.includes('distance') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder="Distance (miles)"
+                                value={set.distance}
+                                onChange={e => handleSetChange(idx, 'distance', e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('duration') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Duration (sec)"
+                                value={set.duration}
+                                onChange={e => handleSetChange(idx, 'duration', e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('weight') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Weight"
+                                value={set.weight}
+                                onChange={e => handleSetChange(idx, 'weight', e.target.value)}
+                              />
+                            )}
+                            {fieldsToShow.includes('reps') && (
+                              <input
+                                className="border rounded px-2 py-1 w-20"
+                                type="number"
+                                min="0"
+                                step="1"
+                                placeholder="Reps"
+                                value={set.reps}
+                                onChange={e => handleSetChange(idx, 'reps', e.target.value)}
+                              />
+                            )}
+                            {/* When sets.length === 0, show the add set button for all except Run */}
+                            {!(fieldsToShow.includes('distance') && fieldsToShow.includes('duration')) && (
+                              <button
+                                type="button"
+                                className="ml-1 w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
+                                onClick={handleAddSet}
+                                title="Add Set"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      {fieldsToShow.includes('duration') && selectedExercise?.fields.includes('duration') && (
+                        <div className="flex items-end gap-2 mb-2">
+                          <input
+                            className="border rounded px-2 py-1 w-20 text-center"
+                            type="text"
+                            placeholder="0:00"
+                            value={formatTimeInput(durationInput)}
+                            onChange={e => setDurationInput(e.target.value)}
+                            maxLength={5}
+                          />
+                          <button
+                            type="button"
+                            className="w-7 h-7 flex items-center justify-center rounded-full bg-green-200 hover:bg-green-300 text-green-800 border border-green-300"
+                            onClick={handleAddSet}
+                            title="Add Set"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                      {/* 1RM display for Weight & Reps exercises */}
+                      {!addingNew && selectedExercise?.fields.includes('weight') && (() => {
+                        // Find all entries for this exercise in the last 2 months
+                        const now = new Date();
+                        const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate());
+                        const relevantEntries = entries.filter(e =>
+                          e.exercise === selectedExercise.name &&
+                          e.sets && Array.isArray(e.sets) &&
+                          new Date(e.date) >= twoMonthsAgo
+                        );
+                        // Find best 1RM
+                        let best1RM = 0;
+                        let bestSet: SetEntry | null = null;
+                        let bestDate = null;
+                        relevantEntries.forEach(e => {
+                          e.sets.forEach(set => {
+                            if (set.weight && set.reps) {
+                              const oneRM = set.weight * (1 + set.reps / 30);
+                              if (oneRM > best1RM) {
+                                best1RM = oneRM;
+                                bestSet = set;
+                                bestDate = e.date;
+                              }
+                            }
+                          });
+                        });
+                        if (best1RM > 0 && bestSet && bestDate) {
+                          // Relative date
+                          const d = new Date(bestDate);
+                          const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
+                          let rel = '';
+                          if (diffDays === 0) rel = 'Today';
+                          else if (diffDays === 1) rel = '1 day ago';
+                          else if (diffDays < 7) rel = `${diffDays} days ago`;
+                          else if (diffDays < 14) rel = '1 week ago';
+                          else if (diffDays < 30) rel = `${Math.floor(diffDays / 7)} weeks ago`;
+                          else if (diffDays < 60) rel = '1 month ago';
+                          else rel = `${Math.floor(diffDays / 30)} months ago`;
+                          return (
+                            <div className="mb-2 text-[13px] text-gray-700 text-center">
+                              <div><b>1RM:</b> {Math.round(best1RM)} lbs</div>
+                              <div className="text-gray-500 text-xs">({(bestSet as SetEntry).weight} x {(bestSet as SetEntry).reps}) {rel}</div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </>
+                  )}
                 </>
               )}
             </>
